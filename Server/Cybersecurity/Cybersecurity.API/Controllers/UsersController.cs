@@ -1,3 +1,5 @@
+using Cybersecurity.Services.Interfaces;
+using Cybersecurity.Services.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cybersecurity.Controllers;
@@ -6,11 +8,25 @@ namespace Cybersecurity.Controllers;
 [Route("[controller]")]
 public class UsersController : ControllerBase
 {
-    [HttpGet]
-    public void GetLoggedUser()
+
+    private readonly IServices _services;
+    public UsersController(IServices services)
     {
-        
+        _services = services;
     }
+    
+    [HttpPost("Register")]
+    public async Task<ActionResult> Register([FromBody] UserCredentialsDto credentials)
+    {
+        return Ok(await _services.Register(credentials.Username, credentials.Password));
+    }
+    
+    [HttpPost("Login")]
+    public async Task<ActionResult> LogIn([FromBody] UserCredentialsDto credentials)
+    {
+        return Ok(await _services.LogIn(credentials.Username, credentials.Password));
+    }
+    
     // [HttpGet]
     // public void GetAllUsers()
     // {

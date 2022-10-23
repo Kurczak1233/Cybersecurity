@@ -17,6 +17,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Cybersecurity.Database\Cybersecurity.Database.csproj" />
+      <ProjectReference Include="..\Cybersecurity.Services\Cybersecurity.Services.csproj" />
     </ItemGroup>
 
 </Project>
