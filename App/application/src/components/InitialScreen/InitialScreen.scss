@@ -1,0 +1,39 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.button {
+  width: 200px;
+  height: 30px;
+  color: black;
+  border: 1px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border-radius: 8px;
+  margin-left: 12px;
+  margin-right: 12px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+.button:hover {
+  background-color: antiquewhite;
+}
+.input {
+  width: 184px;
+  height: 30px;
+  border: 1px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border-radius: 8px;
+  margin-left: 12px;
+  margin-right: 12px;
+  margin-top: 20px;
+  padding: 0 8px;
+  cursor: pointer;
+}

@@ -9,4 +9,6 @@ public class User : BaseEntity
     public bool IsDeleted { get; set; } = false;
     public bool FirstTimeLogin { get; set; }
     public DateTimeOffset PasswordValidityTime { get; set; }
+    public int UserRoleId { get; set; }
+    public UserRole UserRole { get; set; }
 }

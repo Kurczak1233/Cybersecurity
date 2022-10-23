@@ -1,4 +1,4 @@
-import application from "../../authenticationConfig.json";
+import application from "../authenticationConfig.json";
 import { IUserCredentialsDto } from "../models/DTOs/UserCredentialsDto";
 import { AxiosClient } from "./AxiosClient";
 

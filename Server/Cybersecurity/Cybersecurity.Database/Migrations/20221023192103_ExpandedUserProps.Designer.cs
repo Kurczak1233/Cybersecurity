@@ -4,6 +4,7 @@ using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221023192103_ExpandedUserProps")]
+    partial class ExpandedUserProps
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,7 +52,7 @@ namespace Database.Migrations
                     b.Property<DateTimeOffset>("PasswordValidityTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int>("UserRoleId")
+                    b.Property<int?>("UserRoleId")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
@@ -95,13 +97,9 @@ namespace Database.Migrations
 
             modelBuilder.Entity("Database.Entities.User", b =>
                 {
-                    b.HasOne("Database.Entities.UserRole", "UserRole")
+                    b.HasOne("Database.Entities.UserRole", null)
                         .WithMany("Users")
-                        .HasForeignKey("UserRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UserRole");
+                        .HasForeignKey("UserRoleId");
                 });
 
             modelBuilder.Entity("Database.Entities.UserRole", b =>
