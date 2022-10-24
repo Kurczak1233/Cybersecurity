@@ -1,4 +1,6 @@
 using Cybersecurity.Services.Interfaces;
+using Cybersecurity.Services.Models.Enums;
+using Cybersecurity.Services.Models.ViewModels;
 using Database;
 using Database.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -13,29 +15,29 @@ public class Services : IServices
     {
         _context = context;
     }
-    public async Task<bool> LogIn(string userName, string password)
+    public async Task<LoggedUserVm> LogIn(string userName, string password)
     {
         var foundUser = await _context.Users.SingleOrDefaultAsync((item) => item.Password == password && item.Username == userName);
-        return foundUser != null;
+        return new() { Logged = foundUser != null, IsAdmin = (int)foundUser.UserRoleId == (int)UserRolesEnum.Admin };
     }
 
-    public async Task<bool> Register(string userName, string password)
+    public async Task Register(string userName, string password)
     {
         var foundUser = await _context.Users.SingleOrDefaultAsync((item) => item.Username == userName);
         if (foundUser == null)
         {
             _context.Users.AddAsync(new()
             {
-                Email = null,
                 Password = password,
                 Username = userName,
                 IsBlocked = false,
                 IsDeleted = false,
                 FirstTimeLogin = false,
                 PasswordValidityTime = default,
-                UserRoleId = 1,
+                UserRoleId = (int)UserRolesEnum.User,
             });
             await _context.SaveChangesAsync();
+            return;
         }
 
         throw new ArgumentException("User already exits", userName);

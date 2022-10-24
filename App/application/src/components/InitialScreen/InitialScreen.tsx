@@ -3,7 +3,12 @@ import { login, register } from "../../api/UsersClient";
 import { IUserCredentialsDto } from "../../models/DTOs/UserCredentialsDto";
 import "./InitialScreen.scss";
 
-const InitialScreen = () => {
+interface IInitialScreen {
+  setIsLogged: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const InitialScreen = ({ setIsLogged, setIsAdmin }: IInitialScreen) => {
   const [showRegister, setShowRegister] = useState<boolean>(false);
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const registerUsername = useRef<HTMLInputElement>(null);
@@ -35,12 +40,22 @@ const InitialScreen = () => {
   };
 
   const submitLogin = async () => {
-    const request: IUserCredentialsDto = {
-      username: registerUsername.current ? registerUsername.current.value : "",
-      password: registerPassword.current ? registerPassword.current.value : "",
-    };
-    await login(request);
-    setShowLogin(false);
+    try {
+      const request: IUserCredentialsDto = {
+        username: registerUsername.current
+          ? registerUsername.current.value
+          : "",
+        password: registerPassword.current
+          ? registerPassword.current.value
+          : "",
+      };
+      const response = await login(request);
+      setIsLogged(response.logged);
+      setIsAdmin(response.isAdmin);
+      setShowLogin(false);
+    } catch {
+      return;
+    }
   };
 
   return (

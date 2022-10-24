@@ -1,5 +1,6 @@
 using Cybersecurity.Services.Interfaces;
 using Cybersecurity.Services.Models.DTOs;
+using Cybersecurity.Services.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cybersecurity.Controllers;
@@ -18,11 +19,12 @@ public class UsersController : ControllerBase
     [HttpPost("Register")]
     public async Task<ActionResult> Register([FromBody] UserCredentialsDto credentials)
     {
-        return Ok(await _services.Register(credentials.Username, credentials.Password));
+        await _services.Register(credentials.Username, credentials.Password);
+        return Ok();
     }
     
     [HttpPost("Login")]
-    public async Task<ActionResult> LogIn([FromBody] UserCredentialsDto credentials)
+    public async Task<ActionResult<LoggedUserVm>> LogIn([FromBody] UserCredentialsDto credentials)
     {
         return Ok(await _services.LogIn(credentials.Username, credentials.Password));
     }
