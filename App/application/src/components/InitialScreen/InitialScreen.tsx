@@ -6,10 +6,16 @@ import "./InitialScreen.scss";
 interface IInitialScreen {
   setIsLogged: React.Dispatch<React.SetStateAction<boolean>>;
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
+  setUserId: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const InitialScreen = ({ setIsLogged, setIsAdmin }: IInitialScreen) => {
+const InitialScreen = ({
+  setIsLogged,
+  setIsAdmin,
+  setUserId,
+}: IInitialScreen) => {
   const [showRegister, setShowRegister] = useState<boolean>(false);
+  const [isRegistering, setIsRegistering] = useState<boolean>(false);
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const registerUsername = useRef<HTMLInputElement>(null);
   const registerPassword = useRef<HTMLInputElement>(null);
@@ -24,6 +30,7 @@ const InitialScreen = ({ setIsLogged, setIsAdmin }: IInitialScreen) => {
 
   const submitRegister = async () => {
     try {
+      setIsRegistering(true);
       const request: IUserCredentialsDto = {
         username: registerUsername.current
           ? registerUsername.current.value
@@ -34,7 +41,9 @@ const InitialScreen = ({ setIsLogged, setIsAdmin }: IInitialScreen) => {
       };
       await register(request);
       setShowRegister(false);
+      setIsRegistering(false);
     } catch {
+      setIsRegistering(false);
       return;
     }
   };
@@ -52,6 +61,7 @@ const InitialScreen = ({ setIsLogged, setIsAdmin }: IInitialScreen) => {
       const response = await login(request);
       setIsLogged(response.logged);
       setIsAdmin(response.isAdmin);
+      setUserId(response.userId);
       setShowLogin(false);
     } catch {
       return;
@@ -72,9 +82,11 @@ const InitialScreen = ({ setIsLogged, setIsAdmin }: IInitialScreen) => {
       )}
       {showRegister && (
         <>
-          <div onClick={handleShowRegister} className="button">
-            Return
-          </div>
+          {!isRegistering && (
+            <div onClick={handleShowRegister} className="button">
+              Return
+            </div>
+          )}
           <input
             className="input"
             ref={registerUsername}
@@ -86,8 +98,11 @@ const InitialScreen = ({ setIsLogged, setIsAdmin }: IInitialScreen) => {
             type="password"
             placeholder={"Password"}
           />
-          <button className="button" onClick={submitRegister}>
-            Register
+          <button
+            className="button"
+            onClick={() => !isRegistering && submitRegister()}
+          >
+            {isRegistering ? "Submitting..." : "Register"}
           </button>
         </>
       )}

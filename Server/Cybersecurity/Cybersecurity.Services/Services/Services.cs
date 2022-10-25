@@ -1,4 +1,5 @@
 using Cybersecurity.Services.Interfaces;
+using Cybersecurity.Services.Models.DTOs;
 using Cybersecurity.Services.Models.Enums;
 using Cybersecurity.Services.Models.ViewModels;
 using Database;
@@ -18,7 +19,12 @@ public class Services : IServices
     public async Task<LoggedUserVm> LogIn(string userName, string password)
     {
         var foundUser = await _context.Users.SingleOrDefaultAsync((item) => item.Password == password && item.Username == userName);
-        return new() { Logged = foundUser != null, IsAdmin = (int)foundUser.UserRoleId == (int)UserRolesEnum.Admin };
+        if (foundUser != null)
+        {
+            return new() { Logged = true, IsAdmin = foundUser.UserRoleId == (int)UserRolesEnum.Admin, UserId = foundUser.Id };
+        }
+
+        throw new ArgumentException("User was not found", userName);
     }
 
     public async Task Register(string userName, string password)
@@ -26,7 +32,7 @@ public class Services : IServices
         var foundUser = await _context.Users.SingleOrDefaultAsync((item) => item.Username == userName);
         if (foundUser == null)
         {
-            _context.Users.AddAsync(new()
+            await _context.Users.AddAsync(new()
             {
                 Password = password,
                 Username = userName,
@@ -41,5 +47,19 @@ public class Services : IServices
         }
 
         throw new ArgumentException("User already exits", userName);
+    }
+
+    public async Task ChangeUserPassword(ChangePasswordDto request)
+    {
+        var foundUser = await _context.Users.SingleOrDefaultAsync((item) => item.Password == request.OldPassword && item.Id == request.UserId);
+        if (foundUser != null)
+        {
+            foundUser.Password = request.NewPassword;
+            _context.Users.Attach(foundUser);
+            await _context.SaveChangesAsync();
+            return;
+        }
+        
+        throw new ArgumentException("Changing passwords failed");
     }
 }

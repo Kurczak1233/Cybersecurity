@@ -29,6 +29,12 @@ public class UsersController : ControllerBase
         return Ok(await _services.LogIn(credentials.Username, credentials.Password));
     }
     
+    [HttpPost("ChangePassword")]
+    public async Task<ActionResult<LoggedUserVm>> ChangePassword([FromBody] ChangePasswordDto request)
+    {
+        await _services.ChangeUserPassword(request);
+        return Ok();
+    }
     // [HttpGet]
     // public void GetAllUsers()
     // {
@@ -44,11 +50,7 @@ public class UsersController : ControllerBase
     // {
     //     
     // }
-    // [HttpGet]
-    // public void ChangePassword()
-    // {
-    //     
-    // }
+
     // [HttpGet]
     // public void DeleteUser()
     // {
