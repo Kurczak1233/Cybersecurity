@@ -4,6 +4,7 @@ using Cybersecurity.Services.Models.Enums;
 using Cybersecurity.Services.Models.ViewModels;
 using Database;
 using Microsoft.EntityFrameworkCore;
+using BC = BCrypt.Net.BCrypt;
 
 namespace Cybersecurity.Services.Services;
 
@@ -19,8 +20,8 @@ public class Services : IServices
     public async Task<LoggedUserVm> LogIn(string userName, string password)
     {
         var foundUser =
-            await _context.Users.SingleOrDefaultAsync((item) => item.Password == password && item.Username == userName);
-        if (foundUser is { IsBlocked: false, IsDeleted: false })
+            await _context.Users.SingleOrDefaultAsync((item) => item.Username == userName);
+        if (foundUser is { IsBlocked: false, IsDeleted: false } && BC.Verify(password, foundUser.Password))
         {
             var firstTimeLogin = foundUser.FirstTimeLogin;
             foundUser.FirstTimeLogin = false;
@@ -30,7 +31,7 @@ public class Services : IServices
             return new()
             {
                 Logged = true, IsAdmin = foundUser.UserRoleId == (int)UserRolesEnum.Admin, UserId = foundUser.Id,
-                ShouldChangePassword = foundUser.PasswordValidityTime < DateTimeOffset.Now ||
+                ShouldChangePassword = (foundUser.PasswordValidityTime < DateTimeOffset.Now && foundUser.PasswordValidityTime.Year > 2000) ||
                                        (foundUser.CreatedByAdmin && firstTimeLogin)
             };
         }
@@ -45,7 +46,7 @@ public class Services : IServices
         {
             await _context.Users.AddAsync(new()
             {
-                Password = password,
+                Password = BC.HashPassword(password),
                 Username = userName,
                 IsBlocked = false,
                 IsDeleted = false,
