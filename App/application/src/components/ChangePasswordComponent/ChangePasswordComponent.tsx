@@ -24,9 +24,14 @@ const ChangePasswordComponent = ({ userId }: IChangePasswordComponent) => {
 
       await submitPasswordChange(request);
       setIsChanging(false);
+      if (newPassword.current && oldPassword.current) {
+        newPassword.current.value = "";
+        oldPassword.current.value = "";
+      }
       return toast("Changed password");
     } catch {
       setIsChanging(false);
+
       return toast("Changing password failed");
     }
   };

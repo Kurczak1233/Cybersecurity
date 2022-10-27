@@ -757,6 +757,19 @@
         "runtime": {
           "bin/placeholder/Cybersecurity.Database.dll": {}
         }
+      },
+      "Cybersecurity.Services/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "Cybersecurity.Database": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Cybersecurity.Services.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Cybersecurity.Services.dll": {}
+        }
       }
     }
   },
@@ -2265,11 +2278,17 @@
       "type": "project",
       "path": "../Cybersecurity.Database/Cybersecurity.Database.csproj",
       "msbuildProject": "../Cybersecurity.Database/Cybersecurity.Database.csproj"
+    },
+    "Cybersecurity.Services/1.0.0": {
+      "type": "project",
+      "path": "../Cybersecurity.Services/Cybersecurity.Services.csproj",
+      "msbuildProject": "../Cybersecurity.Services/Cybersecurity.Services.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
       "Cybersecurity.Database >= 1.0.0",
+      "Cybersecurity.Services >= 1.0.0",
       "Microsoft.EntityFrameworkCore.Design >= 6.0.10",
       "Swashbuckle.AspNetCore >= 6.2.3"
     ]
@@ -2301,6 +2320,9 @@
           "projectReferences": {
             "C:\\Users\\User\\Desktop\\Cybersecurity\\Cybersecurity\\Server\\Cybersecurity\\Cybersecurity.Database\\Cybersecurity.Database.csproj": {
               "projectPath": "C:\\Users\\User\\Desktop\\Cybersecurity\\Cybersecurity\\Server\\Cybersecurity\\Cybersecurity.Database\\Cybersecurity.Database.csproj"
+            },
+            "C:\\Users\\User\\Desktop\\Cybersecurity\\Cybersecurity\\Server\\Cybersecurity\\Cybersecurity.Services\\Cybersecurity.Services.csproj": {
+              "projectPath": "C:\\Users\\User\\Desktop\\Cybersecurity\\Cybersecurity\\Server\\Cybersecurity\\Cybersecurity.Services\\Cybersecurity.Services.csproj"
             }
           }
         }

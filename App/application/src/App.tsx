@@ -8,6 +8,8 @@ import { Toaster } from "react-hot-toast";
 function App() {
   const [isLogged, setIsLogged] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [shouldChangePassword, setShouldChangePassword] =
+    useState<boolean>(false);
   const [userId, setUserId] = useState<number>(0);
 
   return (
@@ -18,10 +20,16 @@ function App() {
           setIsLogged={setIsLogged}
           setIsAdmin={setIsAdmin}
           setUserId={setUserId}
+          setShouldChangePassword={setShouldChangePassword}
         />
       )}
-      {!isAdmin && isLogged && <UsersComponent userId={userId} />}
-      {isAdmin && isLogged && <AdminsComponent />}
+      {!isAdmin && isLogged && (
+        <UsersComponent
+          userId={userId}
+          shouldChangePassword={shouldChangePassword}
+        />
+      )}
+      {isAdmin && isLogged && <AdminsComponent userId={userId} />}
     </>
   );
 }

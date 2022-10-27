@@ -9,6 +9,7 @@
       "Cybersecurity.API/1.0.0": {
         "dependencies": {
           "Cybersecurity.Database": "1.0.0",
+          "Cybersecurity.Services": "1.0.0",
           "Microsoft.EntityFrameworkCore.Design": "6.0.10",
           "Swashbuckle.AspNetCore": "6.2.3"
         },
@@ -522,6 +523,14 @@
         "runtime": {
           "Cybersecurity.Database.dll": {}
         }
+      },
+      "Cybersecurity.Services/1.0.0": {
+        "dependencies": {
+          "Cybersecurity.Database": "1.0.0"
+        },
+        "runtime": {
+          "Cybersecurity.Services.dll": {}
+        }
       }
     }
   },
@@ -896,6 +905,11 @@
       "hashPath": "system.windows.extensions.4.7.0.nupkg.sha512"
     },
     "Cybersecurity.Database/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Cybersecurity.Services/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
