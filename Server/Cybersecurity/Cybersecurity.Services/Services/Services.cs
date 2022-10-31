@@ -42,6 +42,7 @@ public class Services : IServices
     public async Task Register(string userName, string password, bool createdByAdmin)
     {
         var foundUser = await _context.Users.SingleOrDefaultAsync((item) => item.Username == userName);
+        
         if (foundUser == null)
         {
             await _context.Users.AddAsync(new()

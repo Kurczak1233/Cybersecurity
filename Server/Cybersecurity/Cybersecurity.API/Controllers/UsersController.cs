@@ -67,7 +67,7 @@ public class UsersController : ControllerBase
     }
     
     [HttpPut("ValidDate")]
-    public async Task<ActionResult> DeleteUser([FromBody] PasswordValidDateDTO request)
+    public async Task<ActionResult> ValidDate([FromBody] PasswordValidDateDTO request)
     {
         await _services.UpdatePasswordValidDate(request);
         return Ok();
