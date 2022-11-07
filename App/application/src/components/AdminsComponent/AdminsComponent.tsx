@@ -15,15 +15,22 @@ const AdminsComponent = ({ userId }: IAdminsComponent) => {
   const [allUsers, setAllUsers] = useState<AppUserVm[]>([]);
   const [listShouldUpdate, setListShouldUpdate] = useState<boolean>(true);
 
-  const getAllUsers = async () => {
-    setAllUsers(await getAllApplicationUsers());
-    setListShouldUpdate(false);
+  const getAllUsers = async (isApiSubscribed: boolean) => {
+    const data = await getAllApplicationUsers();
+    if (isApiSubscribed) {
+      setAllUsers(data);
+      setListShouldUpdate(false);
+    }
   };
 
   useEffect(() => {
+    let isApiSubscribed = true;
     if (listShouldUpdate) {
-      getAllUsers();
+      getAllUsers(isApiSubscribed);
     }
+    return () => {
+      isApiSubscribed = false;
+    };
   }, [listShouldUpdate]);
 
   return (

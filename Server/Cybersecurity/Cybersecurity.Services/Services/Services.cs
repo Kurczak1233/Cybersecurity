@@ -25,6 +25,7 @@ public class Services : IServices
         {
             var firstTimeLogin = foundUser.FirstTimeLogin;
             foundUser.FirstTimeLogin = false;
+            foundUser.LastSuccessfulLoggedIn = new DateTimeOffset();
             _context.Users.Attach(foundUser);
             await _context.SaveChangesAsync();
 
@@ -34,6 +35,12 @@ public class Services : IServices
                 ShouldChangePassword = (foundUser.PasswordValidityTime < DateTimeOffset.Now && foundUser.PasswordValidityTime.Year > 2000) ||
                                        (foundUser.CreatedByAdmin && firstTimeLogin)
             };
+        }
+        if (foundUser != null)
+        {
+            foundUser.LastUnsuccessfulLoggedIn = new DateTimeOffset();
+            _context.Users.Attach(foundUser);
+            await _context.SaveChangesAsync();
         }
 
         throw new ArgumentException("User was not found", userName);
@@ -53,6 +60,7 @@ public class Services : IServices
                 IsDeleted = false,
                 FirstTimeLogin = false,
                 PasswordValidityTime = default,
+                Created = new DateTimeOffset(),
                 UserRoleId = (int)UserRolesEnum.User,
                 CreatedByAdmin = createdByAdmin
             });
@@ -70,6 +78,8 @@ public class Services : IServices
         if (foundUser != null)
         {
             foundUser.Password = request.NewPassword;
+            foundUser.LastPasswordChange = new DateTimeOffset();
+
             _context.Users.Attach(foundUser);
             await _context.SaveChangesAsync();
             return;
@@ -84,6 +94,7 @@ public class Services : IServices
         if (foundUser != null)
         {
             foundUser.Username = request.NewUsername;
+            foundUser.LastUsernameChange = new DateTimeOffset();
             _context.Users.Attach(foundUser);
             await _context.SaveChangesAsync();
             return;
@@ -109,6 +120,7 @@ public class Services : IServices
         if (foundUser != null)
         {
             foundUser.IsBlocked = true;
+            foundUser.UserBlockedOn = new DateTimeOffset();
             _context.Users.Attach(foundUser);
             await _context.SaveChangesAsync();
             return;
@@ -123,6 +135,7 @@ public class Services : IServices
         if (foundUser != null)
         {
             foundUser.IsDeleted = true;
+            foundUser.UserDeletedOn = new DateTimeOffset();
             _context.Users.Attach(foundUser);
             await _context.SaveChangesAsync();
             return;
@@ -137,6 +150,7 @@ public class Services : IServices
         if (foundUser != null)
         {
             foundUser.PasswordValidityTime = request.Date;
+            foundUser.PasswordValidityTimeUpdatedOn = new DateTimeOffset();
             _context.Users.Attach(foundUser);
             await _context.SaveChangesAsync();
             return;

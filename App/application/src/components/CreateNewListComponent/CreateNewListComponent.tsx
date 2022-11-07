@@ -11,6 +11,8 @@ const CreateNewListComponent = ({
   setCreatedNewUser,
 }: ICreateNewListComponent) => {
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
+  const [passwordWasGenerated, setPasswordWasGenerated] =
+    useState<boolean>(false);
   const registerUsername = useRef<HTMLInputElement>(null);
   const registerPassword = useRef<HTMLInputElement>(null);
 
@@ -40,6 +42,19 @@ const CreateNewListComponent = ({
     }
   };
 
+  const generateOneTimePassword = () => {
+    if (registerPassword.current) {
+      registerPassword.current.value = Math.round(
+        Math.random() * 899999 + 100000
+      ).toString();
+      setPasswordWasGenerated(true);
+    }
+  };
+
+  const handlePasswordChange = () => {
+    setPasswordWasGenerated(false);
+  };
+
   return (
     <div>
       <div>Users list</div>
@@ -53,9 +68,13 @@ const CreateNewListComponent = ({
       <input
         className="input"
         ref={registerPassword}
-        type="password"
+        type={passwordWasGenerated ? "text" : "password"}
         placeholder={"Password"}
+        onChange={handlePasswordChange}
       />
+      <button style={{ marginLeft: "12px" }} onClick={generateOneTimePassword}>
+        Generate new one time user password
+      </button>
       <button
         className="button"
         onClick={() => !isRegistering && submitRegister()}
