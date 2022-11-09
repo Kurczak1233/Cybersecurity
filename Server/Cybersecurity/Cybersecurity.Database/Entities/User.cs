@@ -8,6 +8,9 @@ public class User : BaseEntity
     public bool CreatedByAdmin { get; set; }
     public bool IsDeleted { get; set; } = false;
     public bool FirstTimeLogin { get; set; }
+    public string OneTimePassword { get; set; }
+    public int FailedLoginsAttempts { get; set; }
+    public DateTimeOffset NewPossibleLoginAttempt { get; set; }
     public DateTimeOffset PasswordValidityTime { get; set; }
     public DateTimeOffset Created { get; set; }
     public DateTimeOffset LastPasswordChange { get; set; }

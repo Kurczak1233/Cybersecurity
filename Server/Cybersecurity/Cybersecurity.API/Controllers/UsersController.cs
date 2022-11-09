@@ -27,7 +27,7 @@ public class UsersController : ControllerBase
     [HttpPost("Register")]
     public async Task<ActionResult> Register([FromBody] UserCredentialsDto credentials)
     {
-        await _services.Register(credentials.Username, credentials.Password, credentials.CreatedByAdmin);
+        await _services.Register(credentials.Username, credentials.Password, credentials.CreatedByAdmin, credentials.PasswordWasGenerated);
         return Ok();
     }
 
@@ -72,17 +72,4 @@ public class UsersController : ControllerBase
         await _services.UpdatePasswordValidDate(request);
         return Ok();
     }
-    
-    
-    // [HttpGet]
-    // public void CreateUser()
-    // {
-    //     
-    // }
-
-    // [HttpGet]
-    // public void DeleteUser()
-    // {
-    //     
-    // }
 }

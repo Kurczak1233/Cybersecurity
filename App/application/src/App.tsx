@@ -8,6 +8,7 @@ import { Toaster } from "react-hot-toast";
 function App() {
   const [isLogged, setIsLogged] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [oneTimePassword, setOneTimePassword] = useState<string>("");
   const [shouldChangePassword, setShouldChangePassword] =
     useState<boolean>(false);
   const [userId, setUserId] = useState<number>(0);
@@ -19,6 +20,7 @@ function App() {
         <InitialScreen
           setIsLogged={setIsLogged}
           setIsAdmin={setIsAdmin}
+          setOneTimePassword={setOneTimePassword}
           setUserId={setUserId}
           setShouldChangePassword={setShouldChangePassword}
         />
@@ -27,6 +29,7 @@ function App() {
         <UsersComponent
           userId={userId}
           shouldChangePassword={shouldChangePassword}
+          oneTimePassword={oneTimePassword}
         />
       )}
       {isAdmin && isLogged && <AdminsComponent userId={userId} />}

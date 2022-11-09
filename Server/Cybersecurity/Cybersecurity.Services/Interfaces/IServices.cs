@@ -6,7 +6,7 @@ namespace Cybersecurity.Services.Interfaces;
 public interface IServices
 {
     public Task<LoggedUserVm> LogIn(string userName, string password);
-    public Task Register(string userName, string password, bool createdByAdmin);
+    public Task Register(string userName, string password, bool createdByAdmin, bool passwordWasGenerated);
     public Task ChangeUserPassword(ChangePasswordDto request);
     public Task ChangeUserUsername(ChangeUsernameDto request);
     public Task<List<AppUserVm>> GetAllAppUsers();

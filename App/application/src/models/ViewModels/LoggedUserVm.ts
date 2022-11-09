@@ -3,4 +3,5 @@ export interface LoggedUserVm {
   logged: boolean;
   userId: number;
   shouldChangePassword: boolean;
+  oneTimePassword: string;
 }

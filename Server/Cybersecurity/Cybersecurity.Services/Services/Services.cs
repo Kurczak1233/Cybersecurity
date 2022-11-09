@@ -21,35 +21,52 @@ public class Services : IServices
     {
         var foundUser =
             await _context.Users.SingleOrDefaultAsync((item) => item.Username == userName);
+        if (foundUser is { } && foundUser.OneTimePassword != "" && !foundUser.FirstTimeLogin)
+        {
+            //Not possible to ever loggin again
+            throw new ArgumentException("You have not changed your one time password", userName);
+        }
+
         if (foundUser is { IsBlocked: false, IsDeleted: false } && BC.Verify(password, foundUser.Password))
         {
             var firstTimeLogin = foundUser.FirstTimeLogin;
             foundUser.FirstTimeLogin = false;
-            foundUser.LastSuccessfulLoggedIn = new DateTimeOffset();
+            foundUser.LastSuccessfulLoggedIn = DateTimeOffset.Now;
             _context.Users.Attach(foundUser);
             await _context.SaveChangesAsync();
 
             return new()
             {
                 Logged = true, IsAdmin = foundUser.UserRoleId == (int)UserRolesEnum.Admin, UserId = foundUser.Id,
-                ShouldChangePassword = (foundUser.PasswordValidityTime < DateTimeOffset.Now && foundUser.PasswordValidityTime.Year > 2000) ||
+                OneTimePassword = foundUser.OneTimePassword,
+                ShouldChangePassword = (foundUser.PasswordValidityTime < DateTimeOffset.Now &&
+                                        foundUser.PasswordValidityTime.Year > 2000) ||
                                        (foundUser.CreatedByAdmin && firstTimeLogin)
             };
         }
+
         if (foundUser != null)
         {
-            foundUser.LastUnsuccessfulLoggedIn = new DateTimeOffset();
+            foundUser.LastUnsuccessfulLoggedIn = DateTimeOffset.Now;
+            foundUser.FailedLoginsAttempts += 1;
+            if (foundUser.FailedLoginsAttempts >= 5 || foundUser.NewPossibleLoginAttempt > DateTimeOffset.Now)
+            {
+                foundUser.FailedLoginsAttempts = 0;
+                foundUser.NewPossibleLoginAttempt = DateTimeOffset.Now.AddMinutes(15);
+                throw new ArgumentException("Wait 15 min to log in", userName);
+            }
             _context.Users.Attach(foundUser);
             await _context.SaveChangesAsync();
+            throw new ArgumentException("Failed to log in", userName);
         }
 
         throw new ArgumentException("User was not found", userName);
     }
 
-    public async Task Register(string userName, string password, bool createdByAdmin)
+    public async Task Register(string userName, string password, bool createdByAdmin, bool passwordWasGenerated)
     {
         var foundUser = await _context.Users.SingleOrDefaultAsync((item) => item.Username == userName);
-        
+
         if (foundUser == null)
         {
             await _context.Users.AddAsync(new()
@@ -58,11 +75,12 @@ public class Services : IServices
                 Username = userName,
                 IsBlocked = false,
                 IsDeleted = false,
-                FirstTimeLogin = false,
+                FirstTimeLogin = true,
                 PasswordValidityTime = default,
-                Created = new DateTimeOffset(),
+                Created = DateTimeOffset.Now,
                 UserRoleId = (int)UserRolesEnum.User,
-                CreatedByAdmin = createdByAdmin
+                CreatedByAdmin = createdByAdmin,
+                OneTimePassword = passwordWasGenerated ? password : "",
             });
             await _context.SaveChangesAsync();
             return;
@@ -74,11 +92,12 @@ public class Services : IServices
     public async Task ChangeUserPassword(ChangePasswordDto request)
     {
         var foundUser = await _context.Users.SingleOrDefaultAsync((item) =>
-            item.Password == request.OldPassword && item.Id == request.UserId);
-        if (foundUser != null)
+            item.Id == request.UserId);
+        if (foundUser != null && BC.Verify(request.OldPassword, foundUser.Password))
         {
-            foundUser.Password = request.NewPassword;
-            foundUser.LastPasswordChange = new DateTimeOffset();
+            foundUser.Password = BC.HashPassword(request.NewPassword);
+            foundUser.OneTimePassword = "";
+            foundUser.LastPasswordChange = DateTimeOffset.Now;
 
             _context.Users.Attach(foundUser);
             await _context.SaveChangesAsync();
@@ -94,7 +113,7 @@ public class Services : IServices
         if (foundUser != null)
         {
             foundUser.Username = request.NewUsername;
-            foundUser.LastUsernameChange = new DateTimeOffset();
+            foundUser.LastUsernameChange = DateTimeOffset.Now;
             _context.Users.Attach(foundUser);
             await _context.SaveChangesAsync();
             return;
@@ -120,7 +139,7 @@ public class Services : IServices
         if (foundUser != null)
         {
             foundUser.IsBlocked = true;
-            foundUser.UserBlockedOn = new DateTimeOffset();
+            foundUser.UserBlockedOn = DateTimeOffset.Now;
             _context.Users.Attach(foundUser);
             await _context.SaveChangesAsync();
             return;
@@ -135,7 +154,7 @@ public class Services : IServices
         if (foundUser != null)
         {
             foundUser.IsDeleted = true;
-            foundUser.UserDeletedOn = new DateTimeOffset();
+            foundUser.UserDeletedOn = DateTimeOffset.Now;
             _context.Users.Attach(foundUser);
             await _context.SaveChangesAsync();
             return;
@@ -150,7 +169,7 @@ public class Services : IServices
         if (foundUser != null)
         {
             foundUser.PasswordValidityTime = request.Date;
-            foundUser.PasswordValidityTimeUpdatedOn = new DateTimeOffset();
+            foundUser.PasswordValidityTimeUpdatedOn = DateTimeOffset.Now;
             _context.Users.Attach(foundUser);
             await _context.SaveChangesAsync();
             return;

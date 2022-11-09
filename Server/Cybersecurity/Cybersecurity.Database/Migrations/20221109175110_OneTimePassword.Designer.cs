@@ -4,6 +4,7 @@ using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221109175110_OneTimePassword")]
+    partial class OneTimePassword
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,9 +38,6 @@ namespace Database.Migrations
                     b.Property<bool>("CreatedByAdmin")
                         .HasColumnType("bit");
 
-                    b.Property<int>("FailedLoginsAttempts")
-                        .HasColumnType("int");
-
                     b.Property<bool>("FirstTimeLogin")
                         .HasColumnType("bit");
 
@@ -58,9 +57,6 @@ namespace Database.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<DateTimeOffset>("LastUsernameChange")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("NewPossibleLoginAttempt")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("OneTimePassword")

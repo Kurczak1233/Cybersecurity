@@ -9,6 +9,7 @@ interface IInitialScreen {
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
   setUserId: React.Dispatch<React.SetStateAction<number>>;
   setShouldChangePassword: React.Dispatch<React.SetStateAction<boolean>>;
+  setOneTimePassword: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const InitialScreen = ({
@@ -16,6 +17,7 @@ const InitialScreen = ({
   setIsAdmin,
   setUserId,
   setShouldChangePassword,
+  setOneTimePassword,
 }: IInitialScreen) => {
   const [showRegister, setShowRegister] = useState<boolean>(false);
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
@@ -43,6 +45,7 @@ const InitialScreen = ({
           ? registerPassword.current.value
           : "",
         createdByAdmin: false,
+        passwordWasGenerated: false,
       };
       await register(request);
       setShowRegister(false);
@@ -64,17 +67,25 @@ const InitialScreen = ({
           ? registerPassword.current.value
           : "",
         createdByAdmin: false,
+        passwordWasGenerated: false,
       };
       const response = await login(request);
       setIsLogged(response.logged);
       setIsAdmin(response.isAdmin);
       setUserId(response.userId);
+      setOneTimePassword(response.oneTimePassword);
       setShouldChangePassword(response.shouldChangePassword);
       setShowLogin(false);
       setIsLogging(false);
-    } catch {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (exception: any) {
+      const ErrorMessage = exception.response.data.includes(
+        "Wait 15 min to log in"
+      )
+        ? "Wait 15 min to log in"
+        : "Login failed";
       setIsLogging(false);
-      return toast("Login failed");
+      return toast(ErrorMessage);
     }
   };
 

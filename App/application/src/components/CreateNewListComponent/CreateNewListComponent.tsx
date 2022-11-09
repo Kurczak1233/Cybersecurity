@@ -27,6 +27,7 @@ const CreateNewListComponent = ({
           ? registerPassword.current.value
           : "",
         createdByAdmin: true,
+        passwordWasGenerated: passwordWasGenerated,
       };
       await register(request);
       setIsRegistering(false);
