@@ -14,17 +14,23 @@ function App() {
     useState<boolean>(false);
   const [userId, setUserId] = useState<number>(0);
   const captchaRef = useRef(null);
+
   return (
     <>
       <Toaster />
       {!isLogged && (
-        <InitialScreen
-          setIsLogged={setIsLogged}
-          setIsAdmin={setIsAdmin}
-          setOneTimePassword={setOneTimePassword}
-          setUserId={setUserId}
-          setShouldChangePassword={setShouldChangePassword}
-        />
+        <ReCAPTCHA
+          sitekey={"6LcmNjMjAAAAAAy9zlxv8FQ1mzU3pOp4lAADxTwW"}
+          ref={captchaRef}
+        >
+          <InitialScreen
+            setIsLogged={setIsLogged}
+            setIsAdmin={setIsAdmin}
+            setOneTimePassword={setOneTimePassword}
+            setUserId={setUserId}
+            setShouldChangePassword={setShouldChangePassword}
+          />
+        </ReCAPTCHA>
       )}
       {!isAdmin && isLogged && (
         <UsersComponent
@@ -34,10 +40,6 @@ function App() {
         />
       )}
       {isAdmin && isLogged && <AdminsComponent userId={userId} />}
-      <ReCAPTCHA
-        sitekey={"6LcmNjMjAAAAAAy9zlxv8FQ1mzU3pOp4lAADxTwW"}
-        ref={captchaRef}
-      />
     </>
   );
 }
